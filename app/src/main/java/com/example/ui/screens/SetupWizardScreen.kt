@@ -1,0 +1,379 @@
+package com.example.ui.screens
+
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.compose.animation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.data.model.SymbolInfo
+import com.example.viewmodel.MainViewModel
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SetupWizardScreen(
+    viewModel: MainViewModel,
+    onSetupComplete: () -> Unit
+) {
+    var currentStep by remember { mutableStateOf(1) }
+    val totalSteps = 5
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("FinTrace Setup") },
+                navigationIcon = {
+                    if (currentStep > 1) {
+                        IconButton(onClick = { currentStep-- }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        }
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Linear Progress Bar
+            LinearProgressIndicator(
+                progress = { currentStep.toFloat() / totalSteps.toFloat() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(3.dp)),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Step Content Box
+            Box(modifier = Modifier.weight(1f)) {
+                when (currentStep) {
+                    1 -> StepWelcome()
+                    2 -> StepApiKey(viewModel)
+                    3 -> StepSymbols(viewModel)
+                    4 -> StepPermissions()
+                    5 -> StepReady(viewModel, onSetupComplete)
+                }
+            }
+
+            // Navigation Buttons Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Step $currentStep of $totalSteps",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Button(
+                    onClick = {
+                        if (currentStep < totalSteps) {
+                            currentStep++
+                        } else {
+                            onSetupComplete()
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(if (currentStep == totalSteps) "Finish" else "Next")
+                    if (currentStep < totalSteps) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowForward,
+                            contentDescription = null,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun StepWelcome() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.TrendingUp,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(96.dp)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = "Welcome to FinTrace",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = "Your real-time, independent financial price tracker and alert dispatcher.",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 24.dp)
+        )
+    }
+}
+
+@Composable
+fun StepApiKey(viewModel: MainViewModel) {
+    val apiKey by viewModel.apiKey.collectAsState()
+    var inputKey by remember { mutableStateOf(apiKey) }
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.VpnKey,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(64.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Twelve Data API",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Enter your API key below. If left blank, FinTrace will operate in Simulated Demo Mode automatically.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+
+        OutlinedTextField(
+            value = inputKey,
+            onValueChange = {
+                inputKey = it
+                viewModel.saveApiKey(it)
+            },
+            label = { Text("API Key (Optional)") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Get a free Twelve Data API Key",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .clickable {
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://twelvedata.com"))
+                    context.startActivity(browserIntent)
+                }
+                .padding(8.dp)
+        )
+    }
+}
+
+@Composable
+fun StepSymbols(viewModel: MainViewModel) {
+    val states by viewModel.symbolStates.collectAsState()
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text(
+            text = "Choose Assets",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(
+            text = "Select default financial assets you wish to monitor immediately on your home dashboard.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        LazyColumn(
+            modifier = Modifier.weight(1f)
+        ) {
+            items(SymbolInfo.ALL) { s ->
+                val state = states.find { it.symbol == s.symbol }
+                val isChecked = state?.isActive ?: false
+
+                ListItem(
+                    headlineContent = { Text(s.symbol, fontWeight = FontWeight.Bold) },
+                    supportingContent = { Text(s.name) },
+                    leadingContent = {
+                        val icon = when (s.category) {
+                            "Metals" -> Icons.Default.Brightness5
+                            "Majors" -> Icons.Default.AttachMoney
+                            else -> Icons.Default.CompareArrows
+                        }
+                        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    },
+                    trailingContent = {
+                        Checkbox(
+                            checked = isChecked,
+                            onCheckedChange = { viewModel.toggleSymbolActive(s.symbol, it) }
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { viewModel.toggleSymbolActive(s.symbol, !isChecked) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun StepPermissions() {
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.Default.Shield,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(64.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Background Permissions",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = "FinTrace operates a Foreground Service to evaluate price crossings continuously. To ensure Android does not kill the app background processes, please configure settings appropriately.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Trigger Battery Settings Deep-link
+        Button(
+            onClick = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                    context.startActivity(intent)
+                }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+        ) {
+            Icon(Icons.Default.BatteryChargingFull, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Launch Battery Permissions")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Button(
+                onClick = {
+                    val intent = Intent().apply {
+                        action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                    }
+                    context.startActivity(intent)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            ) {
+                Icon(Icons.Default.Notifications, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Allow Alerts & Notifications")
+            }
+        }
+    }
+}
+
+@Composable
+fun StepReady(
+    viewModel: MainViewModel,
+    onSetupComplete: () -> Unit
+) {
+    val activeSub by viewModel.activeSymbols.collectAsState()
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.CheckCircle,
+            contentDescription = null,
+            tint = Color(0xFF00E676),
+            modifier = Modifier.size(96.dp)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = "You are Ready!",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = "Setup is complete. FinTrace background monitoring service has started automatically. Currently watching ${activeSub.size} assets.",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 24.dp)
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(
+            onClick = onSetupComplete,
+            modifier = Modifier.fillMaxWidth().height(50.dp)
+        ) {
+            Text("Start FinTrace Dashboard", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        }
+    }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Remix: FinTrace",
+  "description": "Personal-Grade Real-Time Financial Price Monitor \u0026 Alert System",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

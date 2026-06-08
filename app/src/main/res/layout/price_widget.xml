@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_bg"
+    android:padding="12dp">
+
+    <!-- Header Row -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/widget_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FinTrace Markets"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true" />
+
+        <ImageView
+            android:id="@+id/widget_status_dot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_toEndOf="@id/widget_title"
+            android:layout_marginStart="6dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_circle_status" />
+
+        <ImageButton
+            android:id="@+id/widget_btn_refresh"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_popup_sync"
+            android:contentDescription="Refresh Prices" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#33FFFFFF"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Symbol rows -->
+    <!-- Symbol 1 -->
+    <RelativeLayout
+        android:id="@+id/row_symbol_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/text_symbol_1_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XAU/USD"
+            android:textColor="#E0E0E0"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/text_symbol_1_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+0.45%"
+            android:textColor="#69F0AE"
+            android:textSize="11sp"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:id="@+id/text_symbol_1_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$2,318.45"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_toStartOf="@id/text_symbol_1_change"
+            android:layout_marginEnd="8dp" />
+    </RelativeLayout>
+
+    <!-- Symbol 2 -->
+    <RelativeLayout
+        android:id="@+id/row_symbol_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/text_symbol_2_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EUR/USD"
+            android:textColor="#E0E0E0"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/text_symbol_2_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-0.12%"
+            android:textColor="#FF5252"
+            android:textSize="11sp"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:id="@+id/text_symbol_2_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1.0823"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_toStartOf="@id/text_symbol_2_change"
+            android:layout_marginEnd="8dp" />
+    </RelativeLayout>
+
+    <!-- Symbol 3 -->
+    <RelativeLayout
+        android:id="@+id/row_symbol_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/text_symbol_3_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GBP/USD"
+            android:textColor="#E0E0E0"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/text_symbol_3_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+0.08%"
+            android:textColor="#69F0AE"
+            android:textSize="11sp"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:id="@+id/text_symbol_3_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1.2741"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_toStartOf="@id/text_symbol_3_change"
+            android:layout_marginEnd="8dp" />
+    </RelativeLayout>
+
+</LinearLayout>

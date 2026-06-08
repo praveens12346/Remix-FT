@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg"
+    android:padding="12dp">
+
+    <!-- Header Row -->
+    <RelativeLayout
+        android:id="@+id/header_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:id="@+id/widget_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FinTrace Single"
+            android:textColor="#9E9E9E"
+            android:textSize="11sp"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true" />
+
+        <ImageView
+            android:id="@+id/widget_status_dot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_toEndOf="@id/widget_title"
+            android:layout_marginStart="6dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_circle_status" />
+
+        <ImageButton
+            android:id="@+id/widget_btn_refresh"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_popup_sync"
+            android:contentDescription="Refresh Pricing" />
+    </RelativeLayout>
+
+    <!-- Main Live Pricing and Asset -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/header_row"
+        android:layout_marginTop="8dp"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:id="@+id/text_single_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XAU/USD"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/text_single_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$2,318.45"
+            android:textColor="#00E5FF"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/text_single_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+0.45%"
+            android:textColor="#69F0AE"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginTop="2dp" />
+    </LinearLayout>
+
+</RelativeLayout>
